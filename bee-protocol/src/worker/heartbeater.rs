@@ -1,7 +1,7 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{protocol::Protocol, tangle::MsTangle, worker::TangleWorker};
+use crate::{protocol::Protocol, storage::Backend, tangle::MsTangle, worker::TangleWorker};
 
 use bee_common::{node::Node, shutdown_stream::ShutdownStream, worker::Worker};
 use bee_network::NetworkController;
@@ -21,7 +21,10 @@ const CHECK_HEARTBEATS_INTERVAL_SEC: u64 = 5;
 pub(crate) struct HeartbeaterWorker {}
 
 #[async_trait]
-impl<N: Node> Worker<N> for HeartbeaterWorker {
+impl<N: Node> Worker<N> for HeartbeaterWorker
+where
+    N::Backend: Backend,
+{
     type Config = ();
     type Error = Infallible;
 

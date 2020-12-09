@@ -5,13 +5,14 @@ use crate::{
     milestone::MilestoneIndex,
     packet::{tlv_into_bytes, Heartbeat, Message as MessagePacket, MessageRequest, MilestoneRequest, Packet},
     protocol::Protocol,
+    storage::Backend,
     tangle::MsTangle,
     worker::{MessageRequesterWorkerEvent, MilestoneRequesterWorkerEvent, RequestedMessages, RequestedMilestones},
 };
 
 use bee_message::MessageId;
 use bee_network::{Command::SendMessage, NetworkController, PeerId};
-use bee_storage::storage::Backend;
+use bee_storage::storage::Backend as _;
 
 use log::warn;
 use tokio::sync::mpsc;

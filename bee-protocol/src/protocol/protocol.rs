@@ -7,6 +7,7 @@ use crate::{
     milestone::MilestoneIndex,
     peer::{Peer, PeerManager},
     protocol::ProtocolMetrics,
+    storage::Backend,
     tangle::MsTangle,
     worker::{
         BroadcasterWorker, HasherWorker, HeartbeaterWorker, KickstartWorker, MessageRequesterWorker,
@@ -23,7 +24,7 @@ use bee_common::{
 };
 use bee_network::{Multiaddr, NetworkController, PeerId};
 use bee_snapshot::Snapshot;
-use bee_storage::storage::Backend;
+use bee_storage::storage::Backend as _;
 
 use futures::channel::oneshot;
 use log::{debug, error, info};
@@ -41,11 +42,14 @@ pub struct Protocol {
 impl Protocol {
     pub fn init<N: Node>(
         config: ProtocolConfig,
-        database_config: <N::Backend as Backend>::Config,
+        database_config: <N::Backend as bee_storage::storage::Backend>::Config,
         snapshot: Snapshot,
         network_id: u64,
         node_builder: N::Builder,
-    ) -> N::Builder {
+    ) -> N::Builder
+    where
+        N::Backend: Backend,
+    {
         let protocol = Protocol {
             metrics: ProtocolMetrics::new(),
             peer_manager: PeerManager::new(),
@@ -78,7 +82,10 @@ impl Protocol {
             .with_worker::<MessageSubmitterWorker>()
     }
 
-    pub fn events<N: Node>(node: &N, config: ProtocolConfig) {
+    pub fn events<N: Node>(node: &N, config: ProtocolConfig)
+    where
+        N::Backend: Backend,
+    {
         let tangle = node.resource::<MsTangle<N::Backend>>().into_weak();
         let network = node.resource::<NetworkController>(); // TODO: Use a weak handle?
 
@@ -157,7 +164,10 @@ impl Protocol {
         node: &N,
         id: PeerId,
         address: Multiaddr,
-    ) -> (mpsc::UnboundedSender<Vec<u8>>, oneshot::Sender<()>) {
+    ) -> (mpsc::UnboundedSender<Vec<u8>>, oneshot::Sender<()>)
+    where
+        N::Backend: Backend,
+    {
         // TODO check if not already added ?
 
         let peer = Arc::new(Peer::new(id, address));

@@ -6,6 +6,7 @@
 pub mod config;
 pub mod event;
 pub mod milestone;
+pub mod storage;
 pub mod tangle;
 
 mod packet;
@@ -15,6 +16,7 @@ mod worker;
 
 pub use milestone::{Milestone, MilestoneIndex};
 pub use protocol::{Protocol, ProtocolMetrics};
+pub use storage::Backend;
 pub use worker::{
     MessageSubmitterError, MessageSubmitterWorker, MessageSubmitterWorkerEvent, StorageWorker, TangleWorker,
 };

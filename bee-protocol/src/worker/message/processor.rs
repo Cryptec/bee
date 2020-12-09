@@ -5,6 +5,7 @@ use crate::{
     config::ProtocolConfig,
     packet::Message as MessagePacket,
     protocol::Protocol,
+    storage::Backend,
     tangle::{MessageMetadata, MsTangle},
     worker::{
         message_submitter::MessageSubmitterError, BroadcasterWorker, BroadcasterWorkerEvent, MessageRequesterWorker,
@@ -40,7 +41,10 @@ pub(crate) struct ProcessorWorker {
 }
 
 #[async_trait]
-impl<N: Node> Worker<N> for ProcessorWorker {
+impl<N: Node> Worker<N> for ProcessorWorker
+where
+    N::Backend: Backend,
+{
     type Config = (ProtocolConfig, u64);
     type Error = Infallible;
 

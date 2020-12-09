@@ -4,6 +4,7 @@
 use crate::{
     packet::{Message as MessagePacket, MilestoneRequest},
     protocol::Sender,
+    storage::Backend,
     tangle::MsTangle,
     worker::TangleWorker,
 };
@@ -29,7 +30,10 @@ pub(crate) struct MilestoneResponderWorker {
 }
 
 #[async_trait]
-impl<N: Node> Worker<N> for MilestoneResponderWorker {
+impl<N: Node> Worker<N> for MilestoneResponderWorker
+where
+    N::Backend: Backend,
+{
     type Config = ();
     type Error = Infallible;
 

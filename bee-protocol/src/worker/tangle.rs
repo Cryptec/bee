@@ -1,7 +1,7 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{tangle::MsTangle, worker::storage::StorageWorker, MilestoneIndex};
+use crate::{storage::Backend, tangle::MsTangle, worker::storage::StorageWorker, MilestoneIndex};
 
 use bee_common::{node::Node, shutdown_stream::ShutdownStream, worker::Worker};
 use bee_message::MessageId;
@@ -21,7 +21,10 @@ use std::{
 pub struct TangleWorker;
 
 #[async_trait]
-impl<N: Node> Worker<N> for TangleWorker {
+impl<N: Node> Worker<N> for TangleWorker
+where
+    N::Backend: Backend,
+{
     type Config = Snapshot;
     type Error = Infallible;
 

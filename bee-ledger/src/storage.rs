@@ -1,7 +1,11 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{error::Error, model::{LedgerIndex, Output, Spent, Unspent}, metadata::WhiteFlagMetadata};
+use crate::{
+    error::Error,
+    metadata::WhiteFlagMetadata,
+    model::{LedgerIndex, Output, Spent, Unspent},
+};
 
 use bee_message::payload::transaction::OutputId;
 use bee_storage::{
@@ -33,6 +37,7 @@ pub trait Backend:
     + Insert<OutputId, Spent>
     + Insert<Unspent, ()>
     + Insert<(), LedgerIndex>
+    + bee_protocol::storage::Backend
 {
 }
 
@@ -58,6 +63,7 @@ impl<T> Backend for T where
         + Insert<OutputId, Spent>
         + Insert<Unspent, ()>
         + Insert<(), LedgerIndex>
+        + bee_protocol::storage::Backend
 {
 }
 

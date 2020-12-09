@@ -6,6 +6,7 @@
 use crate::{
     packet::Message as MessagePacket,
     protocol::Protocol,
+    storage::Backend,
     worker::{
         message::{HashCache, ProcessorWorker, ProcessorWorkerEvent},
         message_submitter::MessageSubmitterError,
@@ -93,7 +94,10 @@ fn send_hashes(
 }
 
 #[async_trait]
-impl<N: Node> Worker<N> for HasherWorker {
+impl<N: Node> Worker<N> for HasherWorker
+where
+    N::Backend: Backend,
+{
     type Config = usize;
     type Error = Infallible;
 

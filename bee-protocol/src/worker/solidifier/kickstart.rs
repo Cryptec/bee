@@ -4,6 +4,7 @@
 use crate::{
     milestone::MilestoneIndex,
     protocol::Protocol,
+    storage::Backend,
     tangle::MsTangle,
     worker::{MilestoneRequesterWorker, MilestoneSolidifierWorker, RequestedMilestones, TangleWorker},
 };
@@ -23,7 +24,10 @@ const KICKSTART_INTERVAL_SEC: u64 = 1;
 pub(crate) struct KickstartWorker {}
 
 #[async_trait]
-impl<N: Node> Worker<N> for KickstartWorker {
+impl<N: Node> Worker<N> for KickstartWorker
+where
+    N::Backend: Backend,
+{
     type Config = (oneshot::Sender<MilestoneIndex>, u32);
     type Error = Infallible;
 

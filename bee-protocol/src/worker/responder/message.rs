@@ -4,6 +4,7 @@
 use crate::{
     packet::{Message as MessagePacket, MessageRequest},
     protocol::Sender,
+    storage::Backend,
     tangle::MsTangle,
     worker::TangleWorker,
 };
@@ -29,7 +30,10 @@ pub(crate) struct MessageResponderWorker {
 }
 
 #[async_trait]
-impl<N: Node> Worker<N> for MessageResponderWorker {
+impl<N: Node> Worker<N> for MessageResponderWorker
+where
+    N::Backend: Backend,
+{
     type Config = ();
     type Error = Infallible;
 

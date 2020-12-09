@@ -5,6 +5,7 @@ use crate::{
     config::ProtocolConfig,
     event::{LatestMilestoneChanged, LatestSolidMilestoneChanged},
     milestone::{key_manager::KeyManager, Milestone, MilestoneIndex},
+    storage::Backend,
     tangle::MsTangle,
     worker::{
         MilestoneConeUpdaterWorker, MilestoneConeUpdaterWorkerEvent, MilestoneRequesterWorker,
@@ -53,7 +54,7 @@ async fn validate<N: Node>(
     message_id: MessageId,
 ) -> Result<Milestone, Error>
 where
-    N: Node,
+    N::Backend: Backend,
 {
     let message = tangle.get(&message_id).await.ok_or(Error::UnknownMessage)?;
 
@@ -125,9 +126,9 @@ where
 }
 
 #[async_trait]
-impl<N> Worker<N> for MilestoneValidatorWorker
+impl<N: Node> Worker<N> for MilestoneValidatorWorker
 where
-    N: Node,
+    N::Backend: Backend,
 {
     type Config = ProtocolConfig;
     type Error = Infallible;
